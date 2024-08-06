@@ -86,7 +86,7 @@ server.addService(protoDescriptor.publishService.service, {
 });
 
 const serverCredentials = grpc.ServerCredentials.createSsl(
-  null, // CA certificate
+  caCert, // CA certificate
   [{
     cert_chain: clientCert, // Server certificate
     private_key: clientKey // Server private key
