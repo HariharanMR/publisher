@@ -85,25 +85,13 @@ server.addService(protoDescriptor.publishService.service, {
   healthCheck: healthCheck
 });
 
-// GRPC server starting
-// server.bindAsync(SERVER_URL, grpc.ServerCredentials.createSsl(caCert, [{
-//   cert_chain: clientCert,
-//   private_key: clientKey
-// }], true), (error: any, port: any) => {
-//   if (error) {
-//     console.error(`Server failed to start: ${error.message}`);
-//     return;
-//   }
-//   console.log(`Server running at ${SERVER_URL}`);
-//   server.start();
-// });
 const serverCredentials = grpc.ServerCredentials.createSsl(
   caCert, // CA certificate
   [{
     cert_chain: clientCert, // Server certificate
     private_key: clientKey // Server private key
   }],
-  false // Require client certificate
+  true // Require client certificate
 );
 
 server.bindAsync(SERVER_URL, serverCredentials, (error: any, port: any) => {
@@ -114,35 +102,4 @@ server.bindAsync(SERVER_URL, serverCredentials, (error: any, port: any) => {
   console.log(`Server running at ${SERVER_URL}`);
   console.log(`Port ${port}`);
   server.start();
-});
-
-process.on('SIGTERM', () => {
-  console.log('Received SIGTERM signal');
-  server.tryShutdown((error) => {
-      if (error) {
-          console.error('Server shutdown failed:', error);
-      } else {
-          console.log('Server shut down gracefully');
-      }
-  });
-});
-
-process.on('SIGINT', () => {
-  console.log('Received SIGINT signal');
-  server.tryShutdown((error) => {
-      if (error) {
-          console.error('Server shutdown failed:', error);
-      } else {
-          console.log('Server shut down gracefully');
-      }
-  });
-});
-
-// Handle uncaught exceptions and unhandled rejections
-process.on('uncaughtException', (err) => {
-  console.error('Uncaught Exception:', err);
-});
-
-process.on('unhandledRejection', (reason, promise) => {
-  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
